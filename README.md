@@ -1,8 +1,8 @@
 # AgendaFácil - Sistema de agendamento
 ## 1) Problema  
-- Todos os dias, pessoas sofrem pelo atraso no agendamento de exames e consultas pelo SUS, onde algumas
-demoram dias, meses e até anos para serem agendadas. Os sistemas são falhos e de dificil entendimento
-Com um sistema interativo, e com profissionais treinados, estas filas poderiam ser diminuidas ou até mesmo zeradas! 
+- Todos os dias, pessoas sofrem pelo atraso no agendamento de exames e consultas pelo SUS, onde algumasdemoram dias, meses e até anos para serem agendadas. 
+- Os sistemas são falhos e de dificil entendimento
+- Com um sistema interativo, e com profissionais treinados, estas filas poderiam ser diminuidas ou até mesmo zeradas! 
 - Objetivo Inicial: Reduzir as filas do SUS, e facilitar o entendimento de profissionais da Saúde.
 ## 2) Atores e Decisores (quem usa / quem decide)
 - Usuários principais: [Funcionários da saúde]
