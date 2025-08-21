@@ -5,33 +5,20 @@
 - Com um sistema interativo, e com profissionais treinados, estas filas poderiam ser diminuidas ou até mesmo zeradas! 
 - Objetivo Inicial: Reduzir as filas do SUS, e facilitar o entendimento de profissionais da Saúde.
 ## 2) Atores e Decisores (quem usa / quem decide)
-- Usuários principais: [Funcionários da saúde]
-- Decisores/Apoiadores: [Admins/Clínicas]
-## 3) Casos de uso (de forma simples)
-<!-- Formato "Ator: ações que pode fazer".
- DICA: Use "Manter (inserir, mostrar, editar, remover)" quando for CRUD.
- EXEMPLO:
- Todos: Logar/deslogar do sistema; Manter dados cadastrais
- Professor: Manter (inserir, mostrar, editar, remover) todos os chamados
- Aluno: Manter (inserir, mostrar, editar, remover) seus chamados -->
-Todos: [ações comuns, ex.: Logar/deslogar; Manter dados cadastrais]
-[Ator 1]: [ações do ator 1]
-[Ator 2]: [ações do ator 2]
+- Atores: Funcionários da saúde e clinicas
+- Decisores/Apoiadores: Admins
+## 3) Casos de uso (de forma simples) 
+- Todos: [ações comuns, ex.: Logar/des  logar; Manter dados cadastrais]
+- Funcionario da saúde: Manter (inserir, mostrar, editar, remover) todos os agendamentos.
+- Clinica: Manter (inserir, editar, remover) todas as vagas.
+- Admin: Manter (inserir, editar, mostrar, remover) todas as vagas, agendamentos e usuários.
 ## 4) Limites e suposições
-<!-- Simples assim:
- - Limites = regras/prazos/obrigações que você não controla.
- - Suposições = coisas que você espera ter e podem falhar.
- - Plano B = como você segue com a 1ª fatia se algo falhar.
- EXEMPLO:
- Limites: entrega final até o fim da disciplina (ex.: 2025-11-30); rodar no
+- Limites: entrega final até o fim da disciplina (ex.: 2025-11-30); rodar no
 navegador; sem serviços pagos.
- Suposições: internet no laboratório; navegador atualizado; acesso ao GitHub; 10
+- Suposições: internet no laboratório; navegador atualizado; acesso ao GitHub; 10
 min para teste rápido.
- Plano B: sem internet → rodar local e salvar em arquivo/LocalStorage; sem tempo do
+- Plano B: sem internet → rodar local e salvar em arquivo/LocalStorage; sem tempo do
 professor → testar com 3 colegas. -->
-Limites: [prazo final], [regras/tecnologias obrigatórias], [restrições]
-Suposições: [internet/navegador/GitHub/tempo de teste]
-Plano B: [como continua entregando a 1ª fatia se algo falhar]
 ## 5) Hipóteses + validação
 <!-- Preencha as duas frases abaixo. Simples e direto.
  EXEMPLO Valor: Se o aluno ver sua posição na fila, sente mais controle e conclui
