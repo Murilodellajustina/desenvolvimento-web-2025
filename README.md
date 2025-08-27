@@ -20,39 +20,24 @@ min para teste rápido.
 - Plano B: sem internet → rodar local e salvar em arquivo/LocalStorage; sem tempo do
 professor → testar com 3 colegas. -->
 ## 5) Hipóteses + validação
-<!-- Preencha as duas frases abaixo. Simples e direto.
- EXEMPLO Valor: Se o aluno ver sua posição na fila, sente mais controle e conclui
-melhor a atividade.
- Validação: teste com 5 alunos; sucesso se ≥4 abrem/fecham chamado sem ajuda.
- EXEMPLO Viabilidade: Com app no navegador (HTML/CSS/JS + armazenamento local),
- criar e listar chamados responde em até 1 segundo na maioria das vezes (ex.: 9 de
-cada 10).
- Validação: medir no protótipo com 30 ações; meta: pelo menos 27 de 30 ações (9/10)
-em 1s ou menos. -->
-H-Valor: Se [X], então [Y] melhora em [critério].
-Validação (valor): [teste rápido/observação]; alvo: [meta simples].
-H-Viabilidade: Com [tecnologia], [ação/tela] leva até [n] s.
-Validação (viabilidade): [medição no protótipo]; meta: [n] s ou menos na maioria das
-vezes (ex.: 9/10).
+
+H-Valor: Se o funcionário tem mais facilidade de manusear o sistema, então a fila do SUS anda mais rápido.
+Validação: Envia para 5 uniades de saude e testa se os funcionários conseguem manusear apenas utilizando o manual de uso.
+H-Viabilidade: Com HTML/CSS/JS + armazenamento local. Cadastrar exames/consultas, e agendar pacientes, leva até 5s.
+Validação (viabilidade): medir 40 ações; meta: pelo menos 36 das 40 ações em 2s ou menos
 ## 6) Fluxo principal e primeira fatia
-<!-- Pense “Entrada → Processo → Saída”.
- EXEMPLO de Fluxo:
- 1) Aluno faz login
- 2) Clica em "Pedir ajuda" e descreve a dúvida
- 3) Sistema salva e coloca na fila
- 4) Lista mostra ordem e tempo desde criação
- 5) Professor encerra o chamado
- EXEMPLO de 1ª fatia:
- Inclui login simples, criar chamado, listar em ordem.
- Critérios de aceite (objetivos): criar → aparece na lista com horário; encerrar →
-some ou marca "fechado". -->
+
 **Fluxo principal (curto):**
-1) [entrada do usuário] → 2) [processo] → 3) [salvar algo] → 4) [mostrar resultado]
+1) Funcionario da saúde faz login → 
+2) Procura o exame/consulta que deseja → 
+3) Agenda o paciente →
+4) Mostra a confirmação
 **Primeira fatia vertical (escopo mínimo):**
-Inclui: [uma tela], [uma ação principal], [salvar], [mostrar algo]
+Inclui: 2 telas (por tipo de usuário), 3 ações por usuário, Cadastrar, editar e excluir (CRUD);
 Critérios de aceite:
-- [Condição 1 bem objetiva]
-- [Condição 2 bem objetiva]
+- Cadastro realizado com sucesso;
+- Edição realizada com sucesso;
+- Exclusão realizada com sucesso
 ## 7) Esboços de algumas telas (wireframes)
 <!-- Vale desenho no papel (foto), Figma, Excalidraw, etc. Não precisa ser bonito,
 precisa ser claro.
@@ -65,40 +50,33 @@ precisa ser claro.
  ![Wireframe - Lista de chamados](img/wf-lista-chamados.png) -->
 [Links ou imagens dos seus rascunhos de telas aqui]
 ## 8) Tecnologias
-<!-- Liste apenas o que você REALMENTE pretende usar agora. -->
 ### 8.1 Navegador
-**Navegador:** [HTML/CSS/JS | React/Vue/Bootstrap/etc., se houver]
-**Armazenamento local (se usar):** [LocalStorage/IndexedDB/—]
-**Hospedagem:** [GitHub Pages/—]
+**Navegador:** [HTML/CSS/JS | JS, BOOTSTRAP]
+**Armazenamento local:** [LocalStorage]
+**Hospedagem:** [GitHub Pages]
 ### 8.2 Front-end (servidor de aplicação, se existir)
-**Front-end (servidor):** [ex.: Next.js/React/—]
-**Hospedagem:** [ex.: Vercel/—]
+**Front-end (servidor):** [Next.js]
+**Hospedagem:** [GitHub Pages]
 ### 8.3 Back-end (API/servidor, se existir)
-**Back-end (API):** [ex.: FastAPI/Express/PHP/Laravel/Spring/—]
-**Banco de dados:** [ex.: SQLite/Postgres/MySQL/MongoDB/—]
-**Deploy do back-end:** [ex.: Render/Railway/—]
+**Back-end (API):** [Javascript]
+**Banco de dados:** [MySQL ou Postgree]
 ## 9) Plano de Dados (Dia 0) — somente itens 1–3
-<!-- Defina só o essencial para criar o banco depois. -->
+
 ### 9.1 Entidades
-<!-- EXEMPLO:
- - Usuario — pessoa que usa o sistema (aluno/professor)
- - Chamado — pedido de ajuda criado por um usuário -->
-- [Entidade 1] — [o que representa em 1 linha]
-- [Entidade 2] — [...]
-- [Entidade 3] — [...]
+- [Admin] — [Autoriza criação de usuários, pode excluir registros]
+- [Funcionario da saúde] — [Agenda pacientes, exclui ou edita agendamentos]
+- [Clinicas] — [Cadastra, exclui ou editas exames/consultas]
 ### 9.2 Campos por entidade
-<!-- Use tipos simples: uuid, texto, número, data/hora, booleano, char. -->
 ### Usuario
 | Campo | Tipo | Obrigatório | Exemplo |
 |-----------------|-------------------------------|-------------|--------------------|
 | id | número | sim | 1 |
 | nome | texto | sim | "Ana Souza" |
-| email | texto | sim (único) | "ana@exemplo.com" |
 | senha_hash | texto | sim | "$2a$10$..." |
-| papel | número (0=aluno, 1=professor) | sim | 0 |
+| papel | número (0=admin, 1=funcionário da saúde, 2=Clinica) | sim | 0 |
 | dataCriacao | data/hora | sim | 2025-08-20 14:30 |
 | dataAtualizacao | data/hora | sim | 2025-08-20 15:10 |
-### Chamado
+### Agenda
 | Campo | Tipo | Obrigatório | Exemplo |
 |-----------------|--------------------|-------------|-------------------------|
 | id | número | sim | 2 |
@@ -108,8 +86,6 @@ precisa ser claro.
 | dataCriacao | data/hora | sim | 2025-08-20 14:35 |
 | dataAtualizacao | data/hora | sim | 2025-08-20 14:50 |
 ### 9.3 Relações entre entidades
-<!-- Frases simples bastam. EXEMPLO:
- Um Usuario tem muitos Chamados (1→N).
- Um Chamado pertence a um Usuario (N→1). -->
-- Um [A] tem muitos [B]. (1→N)
-- Um [B] pertence a um [A]. (N→1)
+- Uma Clinica tem muitos exames/consultas. (1→N)
+- Um exame/consulta pertence a muitas clinicas. (1→N)
+- Um funcionario da saúde possui muitos agendamentos. (N→1)
