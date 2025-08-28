@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "- Todos os dias, pessoas sofrem pelo atraso no agendamento de exames e consultas pelo SUS, onde algumas demoram dias, meses e até anos para serem agendadas. \r - Os sistemas são falhos e de dificil entendimento\r - Com um sistema interativo, e com profissionais treinados, estas filas poderiam ser diminuidas ou até mesmo zeradas! \r - Objetivo Inicial: Reduzir as filas do SUS, e facilitar o entendimento de profissionais da Saúde.\r ## 2) Atores e Decisores (quem usa / quem decide)\r - Atores: Funcionários da saúde e clinicas\r - Decisores/Apoiadores: Admins\r ## 3) Casos de uso (de forma simples) \r - Todos: [ações comuns, ex.: Logar/des  logar; Manter dados cadastrais]\r - Funcionario da saúde: Manter (inserir, mostrar, editar, remover) todos os agendamentos.\r - Clinica: Manter (inserir, editar, remover) todas as vagas.\r - Admin: Manter (inserir, editar, mostrar, remover) todas as vagas, agendamentos e usuários.\r ## 4) Limites e suposições\r - Limites: entrega final até o fim da disciplina (ex.: 2025-11-30); rodar no\r navegador; sem serviços pagos.\r - Suposições: internet no laboratório; navegador atualizado; acesso ao GitHub; 10\r min para teste rápido.\r - Plano B: sem internet → rodar local e salvar em arquivo/LocalStorage; sem tempo do\r professor → testar com 3 colegas. -->\r ## 5) Hipóteses + validação",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
