@@ -48,7 +48,7 @@ precisa ser claro.
  • Painel do professor (atender/encerrar)
  EXEMPLO de imagem:
  ![Wireframe - Lista de chamados](img/wf-lista-chamados.png) -->
-[Links ou imagens dos seus rascunhos de telas aqui]
+[Links ou imagens dos seus rascunhos de telas aqui]...
 ## 8) Tecnologias
 ### 8.1 Navegador
 **Navegador:** [HTML/CSS/JS | JS, BOOTSTRAP]
