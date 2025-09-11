@@ -1,4 +1,4 @@
-# AgendaFácil - Sistema de agendamento
+# AgendaAí - Sistema de agendamento
 ## 1) Problema  
 - Todos os dias, pessoas sofrem pelo atraso no agendamento de exames e consultas pelo SUS, onde algumas demoram dias, meses e até anos para serem agendadas. 
 - Os sistemas são falhos e de dificil entendimento
@@ -39,15 +39,7 @@ Critérios de aceite:
 - Edição realizada com sucesso;
 - Exclusão realizada com sucesso
 ## 7) Esboços de algumas telas (wireframes)
-<!-- Vale desenho no papel (foto), Figma, Excalidraw, etc. Não precisa ser bonito,
-precisa ser claro.
- EXEMPLO de telas:
- • Login
- • Lista de chamados (ordem + tempo desde criação)
- • Novo chamado (formulário simples)
- • Painel do professor (atender/encerrar)
- EXEMPLO de imagem:
- ![Wireframe - Lista de chamados](img/wf-lista-chamados.png) -->
+
 [Links ou imagens dos seus rascunhos de telas aqui]...
 ## 8) Tecnologias
 ### 8.1 Navegador
@@ -65,27 +57,59 @@ precisa ser claro.
 ### 9.1 Entidades
 - [Admin] — [Autoriza criação de usuários, pode excluir registros]
 - [Funcionario da saúde] — [Agenda pacientes, exclui ou edita agendamentos]
-- [Clinicas] — [Cadastra, exclui ou editas exames/consultas]
+- [Clinicas] — [Cadastra, exclui ou editas exames/consultas] 
 ### 9.2 Campos por entidade
 ### Usuario
-| Campo | Tipo | Obrigatório | Exemplo |
+| Campo           | Tipo                          | Obrigatório | Exemplo            |
 |-----------------|-------------------------------|-------------|--------------------|
-| id | número | sim | 1 |
-| nome | texto | sim | "Ana Souza" |
-| senha_hash | texto | sim | "$2a$10$..." |
-| papel | número (0=admin, 1=funcionário da saúde, 2=Clinica) | sim | 0 |
-| dataCriacao | data/hora | sim | 2025-08-20 14:30 |
-| dataAtualizacao | data/hora | sim | 2025-08-20 15:10 |
+| id              | número                        | sim         | 1                  |
+| nome            | texto                         | sim         | "Ana Souza"        |
+| email           | texto                         | sim (único) | "Murilo@gmail.com"  |
+| senha_hash      | texto                         | sim         | "$2a$10$..."       |
+| papel           | número (0=admin, 1=funcionário da saúde, 2=Clinica) | sim | 0    |
+| dataCriacao     | data/hora                     | sim         | 2025-08-20 14:30   |
+| dataAtualizacao | data/hora                     | sim         | 2025-08-20 15:10   |
 ### Agenda
-| Campo | Tipo | Obrigatório | Exemplo |
-|-----------------|--------------------|-------------|-------------------------|
-| id | número | sim | 2 |
-| Usuario_id | número (fk) | sim | 8f3a-... |
-| texto | texto | sim | "Erro ao compilar" |
-| estado | char | sim | 'a' \| 'f' |
-| dataCriacao | data/hora | sim | 2025-08-20 14:35 |
-| dataAtualizacao | data/hora | sim | 2025-08-20 14:50 |
+| Campo           | Tipo               |Obrigatório  | Exemplo                   |
+|-----------------|--------------------|-------------|---------------------------|
+| id              | número             | sim         | 2                         |
+| Usuarios_id     | número (fk)        | sim         | 1                         |
+| Exame/consulta  | texto              | sim         | "Ecocardiograma"          |
+| Medico          | texto              | sim         | "Afonso Abreu"            |
+| Nome_paciente   | texto              | sim         | "Marcio Avila"            |
+| estado          | texto              | sim         | 'Disponivel' \ 'Utilizada'|
+| dataCriacao     | data/hora          | sim         | 2025-08-20 14:35          |
+| dataAtualizacao | data/hora          | sim         | 2025-08-20 14:50          |
 ### 9.3 Relações entre entidades
-- Uma Clinica tem muitos exames/consultas. (1→N)
+- Uma Clinica tem muitos exames/consultas. (1→N) 
 - Um exame/consulta pertence a muitas clinicas. (1→N)
-- Um funcionario da saúde possui muitos agendamentos. (N→1)
+- Um funcionario da saúde possui muitos agendamentos. (N→1) 
+
+### 9.4 Modelagem do banco de dados no POSTGRES
+
+CREATE TABLE Usuarios (
+  id                SERIAL       NOT NULL PRIMARY KEY,
+  nome              VARCHAR(255) NOT NULL,
+  email             VARCHAR(255) NOT NULL UNIQUE,
+  senha_hash        VARCHAR(255) NOT NULL,
+  papel             SMALLINT     NOT NULL CHECK (papel IN (0,1,2)),  -- 0=admin, 1=funcionário da saúde, 2=Clinica
+  data_criacao      TIMESTAMP    DEFAULT now(),
+  data_atualizacao  TIMESTAMP    DEFAULT now()
+);
+
+CREATE TABLE Agendamento(
+  id                SERIAL       NOT NULL PRIMARY KEY,
+  Usuarios_id       BIGINT       NOT NULL REFERENCES Usuarios(id),
+  Exame/consulta    VARCHAR(255) NOT NULL,
+  Medico            VARCHAR(255) NOT NULL,
+  Nome_paciente     VARCHAR(255) NOT NULL,
+  estado            VARCHAR(255) NOT NULL CHECK (estado IN ('d','u')), -- d-Disponivel, u-Utilizado
+  data_criacao      TIMESTAMP    DEFAULT now(),
+  data_atualizacao  TIMESTAMP    DEFAULT now()
+)
+
+
+INSERT INTO Usuarios (nome, email, senha_hash, papel) VALUES('Marcelo', 'Marcelo@gmail.com.br', '123', 1);
+INSERT INTO Usuarios (nome, email, senha_hash, papel) VALUES('Admin', 'admin@admin.com.br', '1234', 0);
+
+INSERT INTO Agendamento (usuario_id, Exame/consulta, Medico, estado) VALUES (1, 'Ecodoppler', 'Fernando Arruda', 'd');
