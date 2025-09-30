@@ -64,11 +64,19 @@ Critérios de aceite:
 |-----------------|-------------------------------|-------------|--------------------|
 | id              | número                        | sim         | 1                  |
 | nome            | texto                         | sim         | "Ana Souza"        |
-| email           | texto                         | sim (único) | "Murilo@gmail.com"  |
+| email           | texto                         | sim (único) | "Murilo@gmail.com" |
 | senha_hash      | texto                         | sim         | "$2a$10$..."       |
 | papel           | número (0=admin, 1=funcionário da saúde, 2=Clinica) | sim | 0    |
 | dataCriacao     | data/hora                     | sim         | 2025-08-20 14:30   |
 | dataAtualizacao | data/hora                     | sim         | 2025-08-20 15:10   |
+### Paciente
+| Campo           | Tipo                          | Obrigatório | Exemplo            |
+|-----------------|-------------------------------|-------------|--------------------|
+| id              | número                        | sim         | 1                  |
+| nome            | texto                         | sim         | "Ana Souza"        |
+| CPF             | texto                         | sim         | "074.844.888-25"   |
+| Telefone        | texto                         | sim         | "(49)99144-7768"   |
+
 ### Agenda
 | Campo           | Tipo               |Obrigatório  | Exemplo                   |
 |-----------------|--------------------|-------------|---------------------------|
@@ -76,7 +84,7 @@ Critérios de aceite:
 | Usuarios_id     | número (fk)        | sim         | 1                         |
 | Exame/consulta  | texto              | sim         | "Ecocardiograma"          |
 | Medico          | texto              | sim         | "Afonso Abreu"            |
-| Nome_paciente   | texto              | sim         | "Marcio Avila"            |
+| Paciente_id     | numero             | sim         | 1                         |
 | estado          | texto              | sim         | 'Disponivel' \ 'Utilizada'|
 | dataCriacao     | data/hora          | sim         | 2025-08-20 14:35          |
 | dataAtualizacao | data/hora          | sim         | 2025-08-20 14:50          |
@@ -88,28 +96,40 @@ Critérios de aceite:
 ### 9.4 Modelagem do banco de dados no POSTGRES
 
 CREATE TABLE Usuarios (
-  id                SERIAL       NOT NULL PRIMARY KEY,
-  nome              VARCHAR(255) NOT NULL,
-  email             VARCHAR(255) NOT NULL UNIQUE,
-  senha_hash        VARCHAR(255) NOT NULL,
-  papel             SMALLINT     NOT NULL CHECK (papel IN (0,1,2)),  -- 0=admin, 1=funcionário da saúde, 2=Clinica
-  data_criacao      TIMESTAMP    DEFAULT now(),
-  data_atualizacao  TIMESTAMP    DEFAULT now()
+    id                SERIAL       NOT NULL PRIMARY KEY,
+    nome              VARCHAR(255) NOT NULL,
+    email             VARCHAR(255) NOT NULL UNIQUE,
+    senha_hash        VARCHAR(255) NOT NULL,
+    papel             SMALLINT     NOT NULL CHECK (papel IN (0,1,2)),  -- 0=admin, 1=funcionário da saúde, 2=Clinica
+    data_criacao      TIMESTAMP    DEFAULT now(),
+    data_atualizacao  TIMESTAMP    DEFAULT now()
+);
+
+CREATE TABLE Paciente(
+    id                SERIAL       NOT NULL PRIMARY KEY,
+    Nome              VARCHAR(255) NOT NULL,	
+    CPF               VARCHAR(11)  NOT NULL UNIQUE,
+    Telefone          VARCHAR(15)  NOT NULL
 );
 
 CREATE TABLE Agendamento(
-  id                SERIAL       NOT NULL PRIMARY KEY,
-  Usuarios_id       BIGINT       NOT NULL REFERENCES Usuarios(id),
-  Exame/consulta    VARCHAR(255) NOT NULL,
-  Medico            VARCHAR(255) NOT NULL,
-  Nome_paciente     VARCHAR(255) NOT NULL,
-  estado            VARCHAR(255) NOT NULL CHECK (estado IN ('d','u')), -- d-Disponivel, u-Utilizado
-  data_criacao      TIMESTAMP    DEFAULT now(),
-  data_atualizacao  TIMESTAMP    DEFAULT now()
-)
+    id                SERIAL       NOT NULL PRIMARY KEY,
+    Usuarios_id       BIGINT       NOT NULL REFERENCES Usuarios(id),
+    ExameOuConsulta   VARCHAR(255) NOT NULL,
+    Medico            VARCHAR(255) NOT NULL,
+    Paciente_id       BIGINT       NOT NULL REFERENCES Paciente(Nome),	
+    estado            VARCHAR(255) NOT NULL CHECK (estado IN ('d','u')), -- d-Disponivel, u-Utilizado
+    data_criacao      TIMESTAMP    DEFAULT now(),
+    data_atualizacao  TIMESTAMP    DEFAULT now()
+);
 
 
 INSERT INTO Usuarios (nome, email, senha_hash, papel) VALUES('Marcelo', 'Marcelo@gmail.com.br', '123', 1);
 INSERT INTO Usuarios (nome, email, senha_hash, papel) VALUES('Admin', 'admin@admin.com.br', '1234', 0);
 
-INSERT INTO Agendamento (usuario_id, Exame/consulta, Medico, estado) VALUES (1, 'Ecodoppler', 'Fernando Arruda', 'd');
+INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('João Silva', '12345678901', '11999999999');
+INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Maria Oliveira', '10987654321', '11888888888');
+INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Ana Souza', '11122233344', '11777777777');
+INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Carlos Pereira', '55566677788', '11666666666');
+
+INSERT INTO Agendamento (Usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado) VALUES (1, 'Ecodoppler', 'Fernando Arruda', 1, 'd');
