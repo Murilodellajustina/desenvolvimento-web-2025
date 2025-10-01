@@ -186,8 +186,8 @@ router.patch("/:id", async (req, res) => {
   try {
     // Para "nome": usamos nome ?? null (undefined → null) para acionar o COALESCE.
     const { rows } = await pool.query(
-      "UPDATE produtos SET nome = COALESCE($1, nome), preco = COALESCE($2, preco) WHERE id = $3 RETURNING *",
-      [nome ?? null, p, id]
+      "UPDATE agendamentos SET usuarios_id = $1, ExameOuConsulta = $2, Medico = $3, Paciente_id = $4, estado = $5, data_criacao = %6, data_atualizacao = $7, WHERE id = $8 RETURNING *",
+      [usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado, data_criacao, data_atualizacao, id1]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
