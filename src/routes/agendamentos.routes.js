@@ -32,17 +32,15 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const { usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado} = req.body ?? {}; 
 
-
   const uid = Number(usuarios_id);
   const temUidValido = Number.isInteger(uid) && uid > 0;
-  const ExameOuConsultaEhValido = typeof ExameOuConsulta === "string" && texto.trim() !== "";
-  const MedicoValido = typeof Medico === "string" && texto.trim() !== "";
+  const ExameOuConsultaEhValido = typeof ExameOuConsulta === "string" && ExameOuConsulta.trim() !== "";
+  const MedicoValido = typeof Medico === "string" && Medico.trim() !== "";
   const pid = Number(Paciente_id);
   const temPidValido = Number.isInteger(pid) && pid > 0;
   const est = estado ?? "d"; 
-  const temEstadoValido = isEstadoValido(est);
 
-  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temPidValido || !temEstadoValido ) {
+  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temPidValido || !est ) {
     return res.status(400).json({ erro: "usuarios_id, ExameOuConsulta, Medico, Paciente_id e estado obrigatórios." });
   }
 
@@ -65,16 +63,15 @@ router.put("/:id", async (req, res) => {
 
   const uid = Number(usuarios_id);
   const temUidValido = Number.isInteger(uid) && uid > 0;
-  const ExameOuConsultaEhValido = typeof ExameOuConsulta === "string" && texto.trim() !== "";
-  const MedicoValido = typeof Medico === "string" && texto.trim() !== "";
+  const ExameOuConsultaEhValido = typeof ExameOuConsulta === "string" && ExameOuConsulta.trim() !== "";
+  const MedicoValido = typeof Medico === "string" && Medico.trim() !== "";
   const pid = Number(Paciente_id);
   const temPidValido = Number.isInteger(pid) && pid > 0;
   const est = estado ?? "d"; 
-  const temEstadoValido = isEstadoValido(est);
 
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: "id inválido" });
 
-  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temPidValido || !temEstadoValido ) {
+  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temPidValido || !est ) {
     return res.status(400).json({ erro: "usuarios_id, ExameOuConsulta, Medico, Paciente_id e estado obrigatórios." });
   }
 

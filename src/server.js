@@ -12,9 +12,9 @@ app.get("/", (_req, res) => {
   res.json({
     LISTAR:     "GET /api/agendamento",
     MOSTRAR:    "GET /api/agendamento/:id",
-    CRIAR:      "POST /api/agendamento  BODY: { usuarios_id: Number, ExameOuConsulta: 'string', Medico: 'string', Paciente_id: Number, estado: 'Varchar', data_criacao: Date, data_atualizacao: Date }",
-    SUBSTITUIR: "PUT /api/agendamento/:id  BODY: { usuarios_id: Number, ExameOuConsulta: 'string', Medico: 'string', Paciente_id: Number, estado: 'Varchar', data_criacao: Date, data_atualizacao: Date }",
-    ATUALIZAR:  "PATCH /api/agendamento/:id  BODY: { usuarios_id?: Number, ExameOuConsulta?: 'string', Medico?: 'string', Paciente_id?: Number, estado?: 'Varchar', data_criacao?: Date, data_atualizacao?: Date }",
+    CRIAR:      "POST /api/agendamento  BODY: { usuarios_id: Number, ExameOuConsulta: 'string', Medico: 'string', Paciente_id: Number, estado: 'string'}",
+    SUBSTITUIR: "PUT /api/agendamento/:id  BODY: { usuarios_id: Number, ExameOuConsulta: 'string', Medico: 'string', Paciente_id: Number, estado: 'Varchar' }",
+    ATUALIZAR:  "PATCH /api/agendamento/:id  BODY: { usuarios_id?: Number, ExameOuConsulta?: 'string', Medico?: 'string', Paciente_id?: Number, estado?: 'Varchar' }",
     DELETAR:    "DELETE /api/agendamento/:id",
   });
 });
