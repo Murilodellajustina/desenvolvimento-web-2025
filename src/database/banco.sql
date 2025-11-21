@@ -29,11 +29,20 @@ CREATE TABLE IF NOT EXISTS Paciente(
     Telefone          VARCHAR(15)  NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS Clinica(
+    id                SERIAL       NOT NULL PRIMARY KEY,
+    Nome              VARCHAR(255) NOT NULL,	
+    CEP               VARCHAR(11)  NOT NULL,
+    Telefone          VARCHAR(15)  NOT NULL
+    Endereco          VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS Agendamento(
     id                SERIAL       NOT NULL PRIMARY KEY,
     Usuarios_id       BIGINT       NOT NULL REFERENCES Usuarios(id),
     ExameOuConsulta   VARCHAR(255) NOT NULL,
     Medico            VARCHAR(255) NOT NULL,
+    Clinica_id        BIGINT       NOT NULL REFERENCES Clinica(id),
     Paciente_id       BIGINT       NOT NULL REFERENCES Paciente(id),	
     estado            VARCHAR(255) NOT NULL CHECK (estado IN ('d','u')), -- d-Disponivel, u-Utilizado
     data_criacao      TIMESTAMP    DEFAULT now(),

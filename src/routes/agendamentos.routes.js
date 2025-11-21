@@ -30,24 +30,26 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado} = req.body ?? {}; 
+  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado} = req.body ?? {}; 
 
   const uid = Number(usuarios_id);
   const temUidValido = Number.isInteger(uid) && uid > 0;
   const ExameOuConsultaEhValido = typeof ExameOuConsulta === "string" && ExameOuConsulta.trim() !== "";
   const MedicoValido = typeof Medico === "string" && Medico.trim() !== "";
+  const cid = Number(Clinica_id);
   const pid = Number(Paciente_id);
+  const temCidValido = Number.isInteger(cid) && cid > 0;
   const temPidValido = Number.isInteger(pid) && pid > 0;
   const est = estado ?? "d"; 
 
-  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temPidValido || !est ) {
-    return res.status(400).json({ erro: "usuarios_id, ExameOuConsulta, Medico, Paciente_id e estado obrigatórios." });
+  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temCidValido || !temPidValido || !est ) {
+    return res.status(400).json({ erro: "usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id e estado obrigatórios." });
   }
 
   try {
     const { rows } = await pool.query(
-      "INSERT INTO agendamento (usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado]
+      "INSERT INTO agendamento (usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado]
     );
     res.status(201).json(rows[0]); 
   } catch {
@@ -58,28 +60,30 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const { usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado} = req.body ?? {}; 
+  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado} = req.body ?? {}; 
 
 
   const uid = Number(usuarios_id);
   const temUidValido = Number.isInteger(uid) && uid > 0;
   const ExameOuConsultaEhValido = typeof ExameOuConsulta === "string" && ExameOuConsulta.trim() !== "";
   const MedicoValido = typeof Medico === "string" && Medico.trim() !== "";
+  const cid = Number(Clinica_id);
   const pid = Number(Paciente_id);
+  const temCidValido = Number.isInteger(cid) && cid > 0;
   const temPidValido = Number.isInteger(pid) && pid > 0;
   const est = estado ?? "d"; 
 
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: "id inválido" });
 
-  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temPidValido || !est ) {
-    return res.status(400).json({ erro: "usuarios_id, ExameOuConsulta, Medico, Paciente_id e estado obrigatórios." });
+  if (!temUidValido || !ExameOuConsultaEhValido || !MedicoValido || !temCidValido || !temPidValido || !est ) {
+    return res.status(400).json({ erro: "usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id e estado obrigatórios." });
   }
 
 
   try {
     const { rows } = await pool.query(
-      "UPDATE agendamento SET usuarios_id = $1, ExameOuConsulta = $2, Medico = $3, Paciente_id = $4, estado = $5 WHERE id = $6 RETURNING *",
-      [usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado, id]
+      "UPDATE agendamento SET usuarios_id = $1, ExameOuConsulta = $2, Medico = $3, Clinica_id = $4, Paciente_id = $5, estado = $6 WHERE id = $7 RETURNING *",
+      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, id]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
@@ -92,11 +96,11 @@ router.put("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const { usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado } = req.body ?? {};
+  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado } = req.body ?? {};
 
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: "id inválido" });
 
-  if (usuarios_id === undefined && ExameOuConsulta === undefined && Medico === undefined && Paciente_id === undefined && estado === undefined) {
+  if (usuarios_id === undefined && ExameOuConsulta === undefined && Medico === undefined && Clinica_id === undefined && Paciente_id === undefined && estado === undefined) {
     return res.status(400).json({ erro: "envie todos os dados" });
   }
 
@@ -121,6 +125,13 @@ router.patch("/:id", async (req, res) => {
             return res.status(400).json({ erro: "Medico deve ser valido" });
         }
     } 
+    let cid = null;
+    if (Clinica_id !== undefined) {
+        cid = Number(Clinica_id);
+        if (!Number.isInteger(cid) || cid <= 0) {
+            return res.status(400).json({ erro: "Clinica_id deve ser inteiro > 0" });
+        }
+    }
     let pid = null;
     if (Paciente_id !== undefined) {
         pid = Number(Paciente_id);
@@ -131,8 +142,8 @@ router.patch("/:id", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "UPDATE agendamentos SET usuarios_id = $1, ExameOuConsulta = $2, Medico = $3, Paciente_id = $4, estado = $5 WHERE id = $6 RETURNING *",
-      [usuarios_id, ExameOuConsulta, Medico, Paciente_id, estado, id]
+      "UPDATE agendamentos SET usuarios_id = $1, ExameOuConsulta = $2, Medico = $3, Clinica_id = %4, Paciente_id = $5, estado = $6 WHERE id = $7 RETURNING *",
+      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, id]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });

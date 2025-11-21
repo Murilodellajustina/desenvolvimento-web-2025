@@ -6,11 +6,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const PSQL       = process.env.PSQL_PATH || 'psql';           // caminho do psql (ou só 'psql' se estiver no PATH do sistema)
+const PSQL = process.env.PSQL_PATH || `C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe`; // caminho do psql (ou só 'psql' se estiver no PATH do sistema)
 const PGHOST     = process.env.DB_HOST  || process.env.PGHOST || 'localhost'; // endereço do servidor do Postgres
 const PGPORT     = process.env.DB_PORT  || process.env.PGPORT || '5432';      // porta do Postgres
 const PGUSER     = process.env.DB_USER  || process.env.PGUSER || 'postgres';  // usuário do Postgres
-const PGPASSWORD = process.env.DB_PASSWORD || process.env.PGPASSWORD || 'postgres'; // senha do Postgres
+const PGPASSWORD = process.env.DB_PASSWORD || process.env.PGPASSWORD || 'Murilo1307'; // senha do Postgres
 
 const sqlFile = path.resolve(process.cwd(), 'src', 'database', 'banco.sql');
 
