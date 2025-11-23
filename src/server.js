@@ -1,5 +1,7 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
+import { authMiddleware } from "./middleware/auth.js";
 import agendamentoRouter from "./routes/agendamentos.routes.js";
 import usuariosRouter from "./routes/usuario.routes.js";
 import pacienteRouter from "./routes/paciente.routes.js";
@@ -9,49 +11,47 @@ dotenv.config();
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
-app.get("/", (_req, res) => {
-  res.json({
-    LISTAR:     "GET /api/agendamento",
-    MOSTRAR:    "GET /api/agendamento/:id",
-    CRIAR:      "POST /api/agendamento  BODY: { usuarios_id: Number, ExameOuConsulta: 'string', Medico: 'string', Clinica_id: Number, Paciente_id: Number, estado: 'string'}",
-    SUBSTITUIR: "PUT /api/agendamento/:id  BODY: { usuarios_id: Number, ExameOuConsulta: 'string', Medico: 'string', Clinica_id: Number, Paciente_id: Number, estado: 'Varchar' }",
-    ATUALIZAR:  "PATCH /api/agendamento/:id  BODY: { usuarios_id?: Number, ExameOuConsulta?: 'string', Medico?: 'string', Clinica_id?: Number, Paciente_id?: Number, estado?: 'Varchar' }",
-    DELETAR:    "DELETE /api/agendamento/:id",
-  });
-});
+app.use("/api/agendamento", authMiddleware, agendamentoRouter);
+
 
 app.get("/", (_req, res) => {
   res.json({
-    LISTAR:     "GET /api/usuarios",
-    MOSTRAR:    "GET /api/usuarios/:id",
-    CRIAR:      "POST /api/usuarios  BODY: { nome: 'string', email: 'string', papel: Number, senha: 'string'}",
-    SUBSTITUIR: "PUT /api/usuarios/:id  BODY: { nome: 'string', email: 'string', papel: Number, senha: 'string'}",
-    ATUALIZAR:  "PATCH /api/usuarios/:id  BODY: {nome?: 'string', email?: 'string', papel?: Number, senha?: 'string' }",
-    DELETAR:    "DELETE /api/usuarios/:id",
-  });
-});
-
-app.get("/", (_req, res) => {
-  res.json({
-    LISTAR:     "GET /api/paciente",
-    MOSTRAR:    "GET /api/paciente/:id",
-    CRIAR:      "POST /api/paciente  BODY: { nome: 'string', cpf: 'string', telefone: 'string'}",
-    SUBSTITUIR: "PUT /api/paciente/:id  BODY: { nome: 'string', cpf: 'string', telefone: 'string'}",
-    ATUALIZAR:  "PATCH /api/paciente/:id  BODY: {nome?: 'string', cpf?: 'string', telefone?: 'string' }",
-    DELETAR:    "DELETE /api/paciente/:id",
-  });
-});
-
-app.get("/", (_req, res) => {
-  res.json({
-    LISTAR:     "GET /api/clinica",
-    MOSTRAR:    "GET /api/clinica/:id",
-    CRIAR:      "POST /api/clinica  BODY: { nome: 'string', cep: 'string', telefone: 'string', endereco: 'string'}",
-    SUBSTITUIR: "PUT /api/clinica/:id  BODY: { nome: 'string', cep: 'string', telefone: 'string', endereco: 'string'}",
-    ATUALIZAR:  "PATCH /api/clinica/:id  BODY: {nome?: 'string', cep?: 'string', telefone?: 'string', endereco: 'string' }",
-    DELETAR:    "DELETE /api/clinica/:id",
+    AGENDAMENTO: {
+      LISTAR:     "GET /api/agendamento",
+      MOSTRAR:    "GET /api/agendamento/:id",
+      CRIAR:      "POST /api/agendamento",
+      SUBSTITUIR: "PUT /api/agendamento/:id",
+      ATUALIZAR:  "PATCH /api/agendamento/:id",
+      DELETAR:    "DELETE /api/agendamento/:id",
+    },
+    USUARIOS: {
+      LISTAR:     "GET /api/usuarios",
+      MOSTRAR:    "GET /api/usuarios/:id",
+      CRIAR:      "POST /api/usuarios",
+      SUBSTITUIR: "PUT /api/usuarios/:id",
+      ATUALIZAR:  "PATCH /api/usuarios/:id",
+      DELETAR:    "DELETE /api/usuarios/:id",
+    },
+    PACIENTE: {
+      LISTAR:     "GET /api/paciente",
+      MOSTRAR:    "GET /api/paciente/:id",
+      CRIAR:      "POST /api/paciente",
+      SUBSTITUIR: "PUT /api/paciente/:id",
+      ATUALIZAR:  "PATCH /api/paciente/:id",
+      DELETAR:    "DELETE /api/paciente/:id",
+    },
+    CLINICA: {
+      LISTAR:     "GET /api/clinica",
+      MOSTRAR:    "GET /api/clinica/:id",
+      CRIAR:      "POST /api/clinica",
+      SUBSTITUIR: "PUT /api/clinica/:id",
+      ATUALIZAR:  "PATCH /api/clinica/:id",
+      DELETAR:    "DELETE /api/clinica/:id",
+    },
   });
 });
 
