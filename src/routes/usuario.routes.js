@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 
 const router = Router();
 
-/* -------------------- LOGIN -------------------- */
 router.post("/login", async (req, res) => {
   const { email, senha } = req.body;
 
@@ -21,13 +20,12 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ erro: "Usuário não encontrado" });
     }
 
-    // compara a senha enviada com o hash salvo no banco
+
     const senhaOk = await bcrypt.compare(senha, usuario.senha_hash);
     if (!senhaOk) {
       return res.status(401).json({ erro: "Senha incorreta" });
     }
 
-    // gera token JWT
     const token = jwt.sign(
       { id: usuario.id, nome: usuario.nome, papel: usuario.papel },
       process.env.JWT_SECRET,
@@ -41,7 +39,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-/* -------------------- LISTAR TODOS -------------------- */
 router.get("/", async (_req, res) => {
   try {
     const { rows } = await pool.query("SELECT * FROM usuarios ORDER BY id DESC");
@@ -52,7 +49,6 @@ router.get("/", async (_req, res) => {
   }
 });
 
-/* -------------------- MOSTRAR POR ID -------------------- */
 router.get("/:id", async (req, res) => {
   const id = Number(req.params.id);
 
@@ -73,7 +69,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/* -------------------- CRIAR USUÁRIO -------------------- */
 router.post("/", async (req, res) => {
   const { nome, email, papel, senha } = req.body;
 
@@ -98,7 +93,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-/* -------------------- ATUALIZAR (PUT) -------------------- */
 router.put("/:id", async (req, res) => {
   const id = Number(req.params.id);
   const { nome, email, papel, senha } = req.body;
@@ -123,7 +117,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-/* -------------------- DELETAR -------------------- */
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
 

@@ -48,15 +48,15 @@ router.get("/:id", async (req, res) => {
 
 
 router.post("/", async (req, res) => {
-  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado } = req.body;
+  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, estado } = req.body;
 
   try {
     const { rows } = await pool.query(
       `INSERT INTO agendamento 
-      (usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado) 
-      VALUES ($1,$2,$3,$4,$5,$6) 
+      (usuarios_id, ExameOuConsulta, Medico, Clinica_id, estado) 
+      VALUES ($1,$2,$3,$4,$5) 
       RETURNING *`,
-      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado]
+      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, estado]
     );
 
     res.status(201).json(rows[0]);
