@@ -14,11 +14,12 @@ router.get("/", async (_req, res) => {
         a.paciente_id,
         p.nome AS paciente_nome,
         a.estado,
+        a.data_agenda,
         a.data_criacao,
         a.data_atualizacao
-      FROM agendamento a
-      JOIN paciente p ON p.id = a.paciente_id
-      ORDER BY a.id DESC
+        FROM agendamento a
+        LEFT JOIN paciente p ON p.id = a.paciente_id
+        ORDER BY a.id DESC
     `);
 
     return res.json(rows);
@@ -48,15 +49,15 @@ router.get("/:id", async (req, res) => {
 
 
 router.post("/", async (req, res) => {
-  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, estado } = req.body;
+  const { usuarios_id, ExameOuConsulta, Medico, Paciente_id, Clinica_id, estado, data_agenda } = req.body;
 
   try {
     const { rows } = await pool.query(
       `INSERT INTO agendamento 
-      (usuarios_id, ExameOuConsulta, Medico, Clinica_id, estado) 
-      VALUES ($1,$2,$3,$4,$5) 
+      (usuarios_id, ExameOuConsulta, Medico, Paciente_id, Clinica_id, estado, data_agenda) 
+      VALUES ($1,$2,$3,$4,$5, $6, $7) 
       RETURNING *`,
-      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, estado]
+      [usuarios_id, ExameOuConsulta, Medico, Paciente_id, Clinica_id, estado, data_agenda]
     );
 
     res.status(201).json(rows[0]);
@@ -70,7 +71,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const id = Number(req.params.id);
 
-  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado } = req.body;
+  const { usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, data_agenda } = req.body;
 
   try {
     const { rows } = await pool.query(
@@ -80,10 +81,11 @@ router.put("/:id", async (req, res) => {
       Medico = $3,
       Clinica_id = $4,
       Paciente_id = $5,
-      estado = $6
-      WHERE id = $7
+      estado = $6,
+      data_agenda = $7,
+      WHERE id = $8
       RETURNING *`,
-      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, id]
+      [usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, data_agenda, id]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
