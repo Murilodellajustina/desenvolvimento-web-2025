@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import { authMiddleware } from "./middleware/auth.js";
@@ -11,9 +12,17 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 app.use(express.json());
+app.use(cookieParser());
+
+app.use("/api/usuarios", usuariosRouter);  
+app.use("/api/paciente", pacienteRouter);
+app.use("/api/clinica", clinicaRouter);
 
 app.use("/api/agendamento", authMiddleware, agendamentoRouter);
 
@@ -55,11 +64,7 @@ app.get("/", (_req, res) => {
   });
 });
 
-app.use("/api/agendamento", agendamentoRouter);
-app.use("/api/usuarios", usuariosRouter);
-app.use("/api/paciente", pacienteRouter);
-app.use("/api/clinica", clinicaRouter);
+
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));

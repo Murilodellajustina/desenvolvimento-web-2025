@@ -2,42 +2,60 @@ import { Router } from "express";
 import { pool } from "../db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
 
 const router = Router();
 
-router.post("/login", async (req, res) => {
-  const { email, senha } = req.body;
+router.get("/me", (req, res) => {
+  const token = req.cookies?.jwt;
+
+  if (!token) return res.status(401).json({ erro: "Não autenticado" });
 
   try {
-    const { rows } = await pool.query(
-      "SELECT * FROM usuarios WHERE email = $1",
-      [email]
-    );
+    const dados = jwt.verify(token, process.env.JWT_SECRET);
+    return res.json(dados);
+  } catch (err) {
+    return res.status(401).json({ erro: "Token inválido" });
+  }
+});
 
+router.post("/login", async (req, res) => {
+  const { email, senha } = req.body;
+  try {
+    const { rows } = await pool.query("SELECT * FROM usuarios WHERE email = $1", [email]);
     const usuario = rows[0];
-
-    if (!usuario) {
-      return res.status(401).json({ erro: "Usuário não encontrado" });
-    }
-
-
+    if (!usuario) return res.status(401).json({ erro: "Usuário não encontrado" });
     const senhaOk = await bcrypt.compare(senha, usuario.senha_hash);
-    if (!senhaOk) {
-      return res.status(401).json({ erro: "Senha incorreta" });
-    }
+    if (!senhaOk) return res.status(401).json({ erro: "Senha incorreta" });
 
-    const token = jwt.sign(
-      { id: usuario.id, nome: usuario.nome, papel: usuario.papel },
-      process.env.JWT_SECRET,
-      { expiresIn: "8h" }
-    );
+    const token = jwt.sign({ id: usuario.id, nome: usuario.nome, papel: usuario.papel }, process.env.JWT_SECRET, { expiresIn: "8h" });
+    const csrfToken = uuid();
 
-    res.json({ token });
+    // JWT cookie (HttpOnly)
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 8 * 60 * 60 * 1000
+    });
+
+    // CSRF cookie (visível ao JS)
+    res.cookie("csrf_token", csrfToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 8 * 60 * 60 * 1000
+    });
+
+    return res.json({ ok: true });
   } catch (err) {
     console.error("Erro login:", err);
     res.status(500).json({ erro: "erro interno" });
   }
 });
+
 
 router.get("/", async (_req, res) => {
   try {
