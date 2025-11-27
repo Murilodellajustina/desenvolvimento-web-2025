@@ -31,7 +31,6 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: usuario.id, nome: usuario.nome, papel: usuario.papel }, process.env.JWT_SECRET, { expiresIn: "8h" });
     const csrfToken = uuid();
 
-    // JWT cookie (HttpOnly)
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: false,
@@ -40,7 +39,6 @@ router.post("/login", async (req, res) => {
       maxAge: 8 * 60 * 60 * 1000
     });
 
-    // CSRF cookie (visível ao JS)
     res.cookie("csrf_token", csrfToken, {
       httpOnly: false,
       secure: false,

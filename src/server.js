@@ -23,7 +23,6 @@ app.use(cookieParser());
 app.use("/api/usuarios", usuariosRouter);  
 app.use("/api/paciente", pacienteRouter);
 app.use("/api/clinica", clinicaRouter);
-
 app.use("/api/agendamento", authMiddleware, agendamentoRouter);
 
 
