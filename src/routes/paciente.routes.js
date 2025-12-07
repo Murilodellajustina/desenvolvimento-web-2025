@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { pool } from "../db.js";
 
-const router = Router(); 
+const router = Router();
 router.get("/", async (_req, res) => {
   try {
     const { rows } = await pool.query("SELECT * FROM paciente ORDER BY id DESC");
@@ -14,7 +14,7 @@ router.get("/", async (_req, res) => {
 
 
 router.get("/:id", async (req, res) => {
-  const id = Number(req.params.id); 
+  const id = Number(req.params.id);
 
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: "id inválido" });
 
@@ -23,29 +23,29 @@ router.get("/:id", async (req, res) => {
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
 
-    res.json(rows[0]); 
+    res.json(rows[0]);
   } catch {
     res.status(500).json({ erro: "erro interno" });
   }
 });
 
 router.post("/", async (req, res) => {
-  const { nome, cpf, telefone} = req.body ?? {}; 
+  const { nome, cpf, telefone, ativo } = req.body ?? {};
 
   const nomeValido = typeof nome === "string" && nome.trim() !== "";
   const cpfValido = typeof cpf === "string" && cpf.trim() !== "";
   const telefoneValido = typeof telefone === "string" && telefone.trim() !== "";
 
-  if (!nomeValido || !cpfValido || !telefoneValido ) {
+  if (!nomeValido || !cpfValido || !telefoneValido) {
     return res.status(400).json({ erro: "nome, cpf e telefone  obrigatórios." });
   }
 
   try {
     const { rows } = await pool.query(
-      "INSERT INTO paciente (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *",
-      [nome, cpf, telefone]
+      "INSERT INTO paciente (nome, cpf, telefone, ativo) VALUES ($1, $2, $3, $4) RETURNING *",
+      [nome, cpf, telefone, ativo]
     );
-    res.status(201).json(rows[0]); 
+    res.status(201).json(rows[0]);
   } catch {
     res.status(500).json({ erro: "erro interno" });
   }
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const { nome, cpf, telefone } = req.body ?? {}; 
+  const { nome, cpf, telefone } = req.body ?? {};
 
   const nomeValido = typeof nome === "string" && nome.trim() !== "";
   const cpfValido = typeof cpf === "string" && cpf.trim() !== "";
@@ -62,67 +62,47 @@ router.put("/:id", async (req, res) => {
 
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: "id inválido" });
 
-  if (!nomeValido || !cpfValido || !telefoneValido ) {
+  if (!nomeValido || !cpfValido || !telefoneValido) {
     return res.status(400).json({ erro: "nome, cpf e telefone  obrigatórios." });
   }
 
 
   try {
     const { rows } = await pool.query(
-      "UPDATE paciente SET nome = $1, cpf = $2, telefone = $3 RETURNING *",
-      [nome, cpf, telefone]
+      "UPDATE paciente SET nome = $1, cpf = $2, telefone = $3, ativo = $4 RETURNING *",
+      [nome, cpf, telefone, ativo]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
 
-    res.json(rows[0]); 
+    res.json(rows[0]);
   } catch {
     res.status(500).json({ erro: "erro interno" });
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id/ativo", async (req, res) => {
   const id = Number(req.params.id);
-  const { nome, cpf, telefone } = req.body ?? {};
+  const { ativo } = req.body;
 
-  if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: "id inválido" });
+  if (!Number.isInteger(id) || id <= 0)
+    return res.status(400).json({ erro: "id inválido" });
 
-  if (nome === undefined && cpf === undefined && telefone === undefined) {
-    return res.status(400).json({ erro: "envie todos os dados" });
-  }
-
-  let nm= null; ;//nome
-    if (nome !== undefined) {
-        nm = String(nome);
-        if (nm !== "string" && texto.trim() == "") {
-            return res.status(400).json({ erro: "Nome deve ser valido" });
-        }
-    }
-  let cpfV = null; // cpf
-    if (cpf !== undefined) {
-        cpfV = String(cpf);
-        if (cpfV !== "string" && texto.trim() == "") {
-            return res.status(400).json({ erro: "cpf deve ser valido." });
-        }
-    } 
-    let tel = null; //telefone
-    if (telefone !== undefined) {
-        tel = String(telefone);
-        if (tel !== "string" && texto.trim() == "") {
-            return res.status(400).json({ erro: "telefone deve ser valido." });
-        }
-    }
+  if (typeof ativo !== "boolean")
+    return res.status(400).json({ erro: "valor inválido para ativo" });
 
   try {
     const { rows } = await pool.query(
-      "UPDATE paciente SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *",
-      [nome, cpf, telefone, id]
+      "UPDATE paciente SET ativo = $1 WHERE id = $2 RETURNING *",
+      [ativo, id]
     );
 
-    if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
+    if (!rows[0])
+      return res.status(404).json({ erro: "paciente não encontrada" });
 
-    res.json(rows[0]); 
-  } catch {
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ erro: "erro interno" });
   }
 });
@@ -137,7 +117,7 @@ router.delete("/:id", async (req, res) => {
 
     if (!r.rowCount) return res.status(404).json({ erro: "não encontrado" });
 
-    res.status(204).end(); 
+    res.status(204).end();
   } catch {
     res.status(500).json({ erro: "erro interno" });
   }

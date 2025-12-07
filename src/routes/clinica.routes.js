@@ -36,7 +36,6 @@ router.post("/", async (req, res) => {
   const cepValido = typeof cep === "string" && cep.trim() !== "" && cep.length === 8;
   const telefoneValido = typeof telefone === "string" && telefone.trim() !== "";
   const enderecoValido = typeof endereco === "string" && endereco.trim() !== "";
-  const ativoValido = typeof ativo === "boolean";
 
   if (!nomeValido || !cepValido || !telefoneValido || !enderecoValido) {
     return res.status(400).json({ erro: "nome, cep, telefone e endereço obrigatórios." });
