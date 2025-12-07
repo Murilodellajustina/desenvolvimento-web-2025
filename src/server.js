@@ -59,6 +59,7 @@ app.get("/", (_req, res) => {
       SUBSTITUIR: "PUT /api/clinica/:id",
       ATUALIZAR:  "PATCH /api/clinica/:id",
       DELETAR:    "DELETE /api/clinica/:id",
+      INATIVAR:   "PATCH /api/clinica/:id/ativo",
     },
   });
 });

@@ -27,6 +27,7 @@ router.post("/login", async (req, res) => {
     if (!usuario) return res.status(401).json({ erro: "Usuário não encontrado" });
     const senhaOk = await bcrypt.compare(senha, usuario.senha_hash);
     if (!senhaOk) return res.status(401).json({ erro: "Senha incorreta" });
+    if (senha.length<6) return res.status(401).json({ erro: "Senha deve ter 6 digitos" });
 
     const token = jwt.sign({ id: usuario.id, nome: usuario.nome, papel: usuario.papel }, process.env.JWT_SECRET, { expiresIn: "8h" });
     const csrfToken = uuid();
@@ -53,6 +54,25 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ erro: "erro interno" });
   }
 });
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/"
+  });
+
+  res.clearCookie("csrf_token", {
+    httpOnly: false,
+    secure: true,
+    sameSite: "lax",
+    path: "/"
+  });
+
+  return res.json({ mensagem: "Logout concluído" });
+});
+
 
 
 router.get("/", async (_req, res) => {

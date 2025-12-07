@@ -1,16 +1,4 @@
-/*\echo
 
-\encoding UTF8
-
-SET client_encoding = 'UTF8';
-
-\set ON_ERROR_STOP ON
-
-DROP DATABASE IF EXISTS db_agendamentos;
-
-CREATE DATABASE db_agendamentos;
-
-\connect db_agendamentos*/
 DROP TABLE  IF EXISTS Usuarios CASCADE;
 CREATE TABLE IF NOT EXISTS Usuarios (
     id                SERIAL       NOT NULL PRIMARY KEY,
@@ -19,7 +7,8 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     senha_hash        VARCHAR(255) NOT NULL,
     papel             SMALLINT     NOT NULL CHECK (papel IN (0,1,2)),  -- 0=admin, 1=funcionário da saúde, 2=Clinica
     data_criacao      TIMESTAMP    DEFAULT now(),
-    data_atualizacao  TIMESTAMP    DEFAULT now()
+    data_atualizacao  TIMESTAMP    DEFAULT now(),
+    Ativo             BOOLEAN      DEFAULT TRUE
 );
 DROP TABLE IF EXISTS Paciente CASCADE;
 CREATE TABLE IF NOT EXISTS Paciente(
@@ -34,7 +23,8 @@ CREATE TABLE IF NOT EXISTS Clinica(
     Nome              VARCHAR(255) NOT NULL,	
     CEP               VARCHAR(11)  NOT NULL,
     Telefone          VARCHAR(15)  NOT NULL,
-    Endereco          VARCHAR(255) NOT NULL
+    Endereco          VARCHAR(255) NOT NULL,
+    Ativo             BOOLEAN      DEFAULT TRUE
 );
 DROP TABLE IF EXISTS Agendamento CASCADE;
 
@@ -61,4 +51,4 @@ INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Carlos Pereira', '5556667778
 
 INSERT INTO Clinica (Nome, CEP, Telefone, Endereco) VALUES ('Clínica Geral Saúde', '880000000', '48333333333', 'Rua Principal, 100');
 
-INSERT INTO Agendamento (Usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, data_agenda) VALUES (1, 'Ecodoppler', 'Fernando Arruda', 1,  1, 'd', '2024/02/15');
+INSERT INTO Agendamento (Usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, data_agenda) VALUES (1, 'Ecodoppler', 'Fernando Arruda', 1,  null, 'd', '2024/02/15');

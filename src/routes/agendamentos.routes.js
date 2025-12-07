@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { pool } from "../db.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -48,8 +49,9 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.post("/", async (req, res) => {
-  const { usuarios_id, exameouconsulta, medico, paciente_id, Clinica_id, estado, data_agenda } = req.body;
+router.post("/", authMiddleware,async (req, res) => {
+  const { exameouconsulta, medico, paciente_id, Clinica_id, estado, data_agenda } = req.body;
+  const usuarios_id = req.usuario.id;
 
   try {
     const { rows } = await pool.query(
@@ -68,18 +70,20 @@ router.post("/", async (req, res) => {
 });
 
 
-router.put("/:id", async (req, res) => {
+router.put("/:id",authMiddleware, async (req, res) => {
   const id = Number(req.params.id);
   const { paciente_id, estado } = req.body;
+  const usuario_id = req.usuario.id;
 
   try {
     const { rows } = await pool.query(
-      `UPDATE agendamento SET 
+      `UPDATE agendamento SET  
         paciente_id = $1,
-        estado = $2
-       WHERE id = $3
-       RETURNING *`,
-      [paciente_id, estado, id]
+        estado = $2,
+        usuarios_id = $3
+        WHERE id = $4
+        RETURNING *`,
+      [paciente_id, estado, usuario_id, id]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });

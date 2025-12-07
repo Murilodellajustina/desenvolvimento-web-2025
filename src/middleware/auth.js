@@ -10,7 +10,7 @@ export function authMiddleware(req, res, next) {
     if (!csrfHeader || csrfHeader !== csrfCookie) return res.status(403).json({ erro: "Falha CSRF" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    req.usuario = decoded;
     next();
   } catch (err) {
     console.error("authMiddleware erro:", err);
