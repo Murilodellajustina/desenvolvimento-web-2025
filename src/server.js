@@ -7,6 +7,7 @@ import agendamentoRouter from "./routes/agendamentos.routes.js";
 import usuariosRouter from "./routes/usuario.routes.js";
 import pacienteRouter from "./routes/paciente.routes.js";
 import clinicaRouter from "./routes/clinica.routes.js";
+import { ensureUsuariosTable } from "./utils/ensureSchema.js";
 
 dotenv.config(); 
 
@@ -82,4 +83,12 @@ app.get("/", (_req, res) => {
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+app.listen(PORT, async () => {
+  console.log(`Servidor ouvindo na porta ${PORT}`);
+
+  try {
+    await ensureUsuariosTable();   
+  } catch (err) {
+    console.error("Erro ao garantir tabelas:", err);
+  }
+});

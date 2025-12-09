@@ -1,4 +1,9 @@
-CREATE TABLE IF NOT EXISTS Usuarios (
+
+import { pool } from "../db.js";
+
+export async function ensureUsuariosTable() {
+    const sql = `
+    CREATE TABLE IF NOT EXISTS Usuarios (
     id                SERIAL       NOT NULL PRIMARY KEY,
     nome              VARCHAR(255) NOT NULL,
     email             VARCHAR(255) NOT NULL UNIQUE,
@@ -38,3 +43,9 @@ CREATE TABLE IF NOT EXISTS Agendamento(
     data_criacao      TIMESTAMP    DEFAULT now(),
     data_atualizacao  TIMESTAMP    DEFAULT now()
 );
+  `;
+
+    console.log("[DB] Garantindo tabelas...");
+    await pool.query(sql);
+    console.log("[DB] Tabelas OK.");
+}
