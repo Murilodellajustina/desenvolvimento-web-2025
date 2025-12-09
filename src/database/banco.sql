@@ -41,15 +41,3 @@ CREATE TABLE IF NOT EXISTS Agendamento(
     data_criacao      TIMESTAMP    DEFAULT now(),
     data_atualizacao  TIMESTAMP    DEFAULT now()
 );
-
-
-INSERT INTO Usuarios (nome, email, senha_hash, papel) VALUES('Marcelo', 'Marcelo@gmail.com.br', '123', 1);
-
-INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('João Silva', '12345678901', '11999999999');
-INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Maria Oliveira', '10987654321', '11888888888');
-INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Ana Souza', '11122233344', '11777777777');
-INSERT INTO Paciente (Nome, CPF, Telefone) VALUES ('Carlos Pereira', '55566677788', '11666666666');
-
-INSERT INTO Clinica (Nome, CEP, Telefone, Endereco) VALUES ('Clínica Geral Saúde', '880000000', '48333333333', 'Rua Principal, 100');
-
-INSERT INTO Agendamento (Usuarios_id, ExameOuConsulta, Medico, Clinica_id, Paciente_id, estado, data_agenda) VALUES (1, 'Ecodoppler', 'Fernando Arruda', 1,  null, 'd', '2024/02/15');
