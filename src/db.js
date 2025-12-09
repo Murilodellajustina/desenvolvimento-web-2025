@@ -13,6 +13,9 @@ const pool = new Pool({
   database: DATABASE, 
   user: USER,         
   password: PASSWORD, 
+   ssl: isProduction
+    ? { rejectUnauthorized: false }   
+    : false,                         
 });
 
 export { pool };
