@@ -49,7 +49,7 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware,async (req, res) => {
   try {
     const {
       usuarios_id,
@@ -108,8 +108,11 @@ router.patch("/:id", authMiddleware, async (req, res) => {
     return res.status(400).json({ erro: "id inválido" });
   }
 
-  const { paciente_id, estado } = req.body;
-  const usuarioId = req.user.id;
+  const { 
+    paciente_id, 
+    estado, 
+    usuarios_id 
+  } = req.body;
 
   try {
     await pool.query(
@@ -118,7 +121,7 @@ router.patch("/:id", authMiddleware, async (req, res) => {
            estado      = $2,
            usuarios_id = $3
        WHERE id = $4`,
-      [paciente_id, estado, usuarioId, id]
+      [paciente_id, estado, usuarios_id, id]
     );
 
     return res.sendStatus(204);
