@@ -79,7 +79,7 @@ router.post("/", authMiddleware,async (req, res) => {
 
 router.put("/:id", authMiddleware, async (req, res) => {
   const id = Number(req.params.id);
-  const { paciente_id, estado, usuario_id } = req.body;
+  const { paciente_id, estado, usuarios_id } = req.body;
 
   try {
     const { rows } = await pool.query(
@@ -89,7 +89,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
         usuarios_id = $3
         WHERE id = $4
         RETURNING *`,
-      [paciente_id, estado, usuario_id, id]
+      [paciente_id, estado, usuarios_id, id]
     );
 
     if (!rows[0]) return res.status(404).json({ erro: "não encontrado" });
