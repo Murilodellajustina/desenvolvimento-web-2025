@@ -49,7 +49,7 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.post("/", authMiddleware,async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   try {
     const {
       usuarios_id,
@@ -102,20 +102,32 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 
-router.patch("/agendamento/:id", async (req, res) => {
+router.patch("/:id", authMiddleware, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ erro: "id inválido" });
+  }
+
   const { paciente_id, estado } = req.body;
+  const usuarioId = req.user.id;
 
-  await pool.query(
-    `UPDATE agendamentos
-     SET paciente_id = $1,
-         estado = $2,
-         usuarios_id = $3
-     WHERE id = $4`,
-    [paciente_id, estado, req.params.id]
-  );
+  try {
+    await pool.query(
+      `UPDATE agendamento
+       SET paciente_id = $1,
+           estado      = $2,
+           usuarios_id = $3
+       WHERE id = $4`,
+      [paciente_id, estado, usuarioId, id]
+    );
 
-  res.sendStatus(204);
+    return res.sendStatus(204);
+  } catch (err) {
+    console.error("PATCH /agendamento erro:", err);
+    return res.status(500).json({ erro: "erro interno" });
+  }
 });
+
 
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
