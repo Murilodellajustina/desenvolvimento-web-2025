@@ -79,8 +79,7 @@ router.post("/", authMiddleware,async (req, res) => {
 
 router.put("/:id", authMiddleware, async (req, res) => {
   const id = Number(req.params.id);
-  const { paciente_id, estado } = req.body;
-  const usuario_id = req.usuario.id;
+  const { paciente_id, estado, usuario_id } = req.body;
 
   try {
     const { rows } = await pool.query(
