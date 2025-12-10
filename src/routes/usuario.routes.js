@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 
 const router = Router();
+const ACCESS_TOKEN_TTL = "2h";
+const REFRESH_TOKEN_TTL = "7d";
 
 router.get("/me", (req, res) => {
   const token = req.cookies?.jwt;
@@ -36,17 +38,31 @@ router.post("/login", async (req, res) => {
       papel: usuario.papel,
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "8h",
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: ACCESS_TOKEN_TTL,
     });
-    const csrfToken = uuid();
 
-    res.cookie("jwt", token, {
+    const refreshToken = jwt.sign(
+      { id: usuario.id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+      { expiresIn: REFRESH_TOKEN_TTL }
+    );
+    const csrfToken = uuid();
+    const cookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: "none",
       path: "/",
-      maxAge: 8 * 60 * 60 * 1000,
+    };
+
+    res.cookie("jwt", accessToken, {
+      ...cookieOptions,
+      maxAge: 2 * 60 * 60 * 1000,
+    });
+
+    res.cookie("refresh_token", refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie("csrf_token", csrfToken, {
@@ -56,7 +72,16 @@ router.post("/login", async (req, res) => {
       path: "/",
       maxAge: 8 * 60 * 60 * 1000,
     });
-    return res.json({ ok: true, csrfToken });
+    return res.json({
+      ok: true,
+      csrfToken,
+      usuario: {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        papel: usuario.papel,
+      },
+    });
   } catch (err) {
     console.error("Erro login:", err);
     res.status(500).json({ erro: "erro interno" });
@@ -64,23 +89,93 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("jwt", {
+  const options = {
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
-    path: "/"
-  });
+    sameSite: "none",
+    path: "/",
+  };
 
-  res.clearCookie("csrf_token", {
-    httpOnly: false,
-    secure: true,
-    sameSite: "lax",
-    path: "/"
-  });
+  res.clearCookie("jwt", options);
+  res.clearCookie("refresh_token", options);
+  res.clearCookie("csrf_token", { ...options, httpOnly: false });
 
-  return res.json({ mensagem: "Logout concluído" });
+  return res.json({ ok: true });
 });
 
+router.post("/refresh", async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) {
+      return res.status(401).json({ erro: "Refresh token ausente" });
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET
+      );
+    } catch (err) {
+      console.error("Erro ao verificar refresh token:", err);
+      return res.status(401).json({ erro: "Refresh token inválido" });
+    }
+    const { rows } = await pool.query(
+      "SELECT id, nome, email, papel FROM usuarios WHERE id = $1 AND ativo = true",
+      [payload.id]
+    );
+
+    const usuario = rows[0];
+    if (!usuario) {
+      return res.status(401).json({ erro: "Usuário não encontrado" });
+    }
+
+    const novoPayload = {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+      papel: usuario.papel,
+    };
+
+    const novoAccessToken = jwt.sign(
+      novoPayload,
+      process.env.JWT_SECRET,
+      { expiresIn: ACCESS_TOKEN_TTL }
+    );
+
+    const novoCsrfToken = uuid();
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    };
+
+    res.cookie("jwt", novoAccessToken, {
+      ...cookieOptions,
+      maxAge: 2 * 60 * 60 * 1000,
+    });
+
+    res.cookie("csrf_token", novoCsrfToken, {
+      httpOnly: false,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 2 * 60 * 60 * 1000,
+    });
+
+    return res.json({
+      ok: true,
+      csrfToken: novoCsrfToken,
+      usuario: novoPayload,
+    });
+  } catch (err) {
+    console.error("POST /refresh erro:", err);
+    return res.status(500).json({ erro: "Erro interno no refresh" });
+  }
+});
 
 
 router.get("/", async (_req, res) => {
