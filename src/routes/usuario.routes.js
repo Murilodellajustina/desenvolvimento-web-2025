@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 
 const router = Router();
-const isProduction = process.env.NODE_ENV === "production";
 
 router.get("/me", (req, res) => {
   const token = req.cookies?.jwt;
@@ -35,20 +34,19 @@ router.post("/login", async (req, res) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: isProduction,                    
-      sameSite: isProduction ? "none" : "lax", 
+      secure: true,        
+      sameSite: "none",    
       path: "/",
       maxAge: 8 * 60 * 60 * 1000,
     });
 
     res.cookie("csrf_token", csrfToken, {
       httpOnly: false,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      secure: true,
+      sameSite: "none",
       path: "/",
       maxAge: 8 * 60 * 60 * 1000,
     });
-
     return res.json({ ok: true, csrfToken });
   } catch (err) {
     console.error("Erro login:", err);
