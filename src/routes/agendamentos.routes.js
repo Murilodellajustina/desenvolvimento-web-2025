@@ -49,11 +49,18 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.post("/", authMiddleware,async (req, res) => {
-  const { exameouconsulta, medico, paciente_id, Clinica_id, estado, data_agenda } = req.body;
-  const usuarios_id = req.usuario.id;
-
+router.post("/", async (req, res) => {
   try {
+    const {
+      usuarios_id,
+      exameouconsulta,
+      medico,
+      paciente_id,
+      Clinica_id,
+      estado,
+      data_agenda
+    } = req.body;
+
     const { rows } = await pool.query(
       `INSERT INTO agendamento 
       (usuarios_id, exameouconsulta, medico, paciente_id, Clinica_id, estado, data_agenda) 
@@ -62,15 +69,15 @@ router.post("/", authMiddleware,async (req, res) => {
       [usuarios_id, exameouconsulta, medico, paciente_id, Clinica_id, estado, data_agenda]
     );
 
-    res.status(201).json(rows[0]);
+    return res.status(201).json(rows[0]);
   } catch (err) {
     console.error("POST /agendamento erro:", err);
-    return res.status(500).json({ erro: "erro interno no servidor" });
+    return res.status(500).json({ erro: "erro interno" });
   }
 });
 
 
-router.put("/:id",authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   const id = Number(req.params.id);
   const { paciente_id, estado } = req.body;
   const usuario_id = req.usuario.id;

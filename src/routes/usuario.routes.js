@@ -29,13 +29,22 @@ router.post("/login", async (req, res) => {
     if (!senhaOk) return res.status(401).json({ erro: "Senha incorreta" });
     if (senha.length < 6) return res.status(401).json({ erro: "Senha deve ter 6 digitos" });
 
-    const token = jwt.sign({ id: usuario.id, nome: usuario.nome, papel: usuario.papel }, process.env.JWT_SECRET, { expiresIn: "8h" });
+    const payload = {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+      papel: usuario.papel,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "8h",
+    });
     const csrfToken = uuid();
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: true,        
-      sameSite: "none",    
+      secure: true,
+      sameSite: "none",
       path: "/",
       maxAge: 8 * 60 * 60 * 1000,
     });
