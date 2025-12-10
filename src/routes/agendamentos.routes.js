@@ -64,8 +64,8 @@ router.post("/", authMiddleware,async (req, res) => {
 
     res.status(201).json(rows[0]);
   } catch (err) {
-    console.error("POST erro:", err);
-    res.status(500).json({ erro: "erro interno" });
+    console.error("POST /agendamento erro:", err);
+    return res.status(500).json({ erro: "erro interno no servidor" });
   }
 });
 
