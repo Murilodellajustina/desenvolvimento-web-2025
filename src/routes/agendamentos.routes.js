@@ -102,6 +102,21 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 
+router.patch("/agendamento/:id", async (req, res) => {
+  const { paciente_id, estado } = req.body;
+
+  await pool.query(
+    `UPDATE agendamentos
+     SET paciente_id = $1,
+         estado = $2,
+         usuarios_id = $3
+     WHERE id = $4`,
+    [paciente_id, estado, req.params.id]
+  );
+
+  res.sendStatus(204);
+});
+
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
 
