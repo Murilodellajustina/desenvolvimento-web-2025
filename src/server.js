@@ -50,7 +50,6 @@ app.get("/", (_req, res) => {
       CRIAR:      "POST /api/agendamento",
       SUBSTITUIR: "PUT /api/agendamento/:id",
       ATUALIZAR:  "PATCH /api/agendamento/:id",
-      DELETAR:    "DELETE /api/agendamento/:id",
     },
     USUARIOS: {
       LISTAR:     "GET /api/usuarios",
@@ -58,7 +57,7 @@ app.get("/", (_req, res) => {
       CRIAR:      "POST /api/usuarios",
       SUBSTITUIR: "PUT /api/usuarios/:id",
       ATUALIZAR:  "PATCH /api/usuarios/:id",
-      DELETAR:    "DELETE /api/usuarios/:id",
+      INATIVAR:   "PATCH /api/usuarios/:id/ativo",
     },
     PACIENTE: {
       LISTAR:     "GET /api/paciente",
@@ -66,7 +65,7 @@ app.get("/", (_req, res) => {
       CRIAR:      "POST /api/paciente",
       SUBSTITUIR: "PUT /api/paciente/:id",
       ATUALIZAR:  "PATCH /api/paciente/:id",
-      DELETAR:    "DELETE /api/paciente/:id",
+      INATIVAR:   "PATCH /api/paciente/:id/ativo",
     },
     CLINICA: {
       LISTAR:     "GET /api/clinica",
@@ -74,7 +73,6 @@ app.get("/", (_req, res) => {
       CRIAR:      "POST /api/clinica",
       SUBSTITUIR: "PUT /api/clinica/:id",
       ATUALIZAR:  "PATCH /api/clinica/:id",
-      DELETAR:    "DELETE /api/clinica/:id",
       INATIVAR:   "PATCH /api/clinica/:id/ativo",
     },
   });

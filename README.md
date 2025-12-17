@@ -65,6 +65,10 @@ Diagrama de sequencia
 
 ![Diagrama sequencia](src/Wireframes/DiagramaDeSequencia.png)
 
+Diagrama de sequencia 2
+
+![Diagrama sequencia 2](src/Wireframes/DiagramaDeSequencia2.png)
+
 ## 8) Tecnologias
 ### 8.1 Navegador
 **Navegador:** [HTML/CSS/JS | JS, BOOTSTRAP]
@@ -173,3 +177,112 @@ CREATE TABLE IF NOT EXISTS Agendamento(
     data_criacao      TIMESTAMP    DEFAULT now(),
     data_atualizacao  TIMESTAMP    DEFAULT now()
 );
+
+## 🔧 Como rodar localmente (passo a passo)
+
+### 1) Pré-requisitos
+- **Node.js** instalado (versão LTS recomendada sendo versão 18 ou superior)  
+- **PostgreSQL** rodando localmente (versão 14 ou superior)
+- **Express.js** instalado
+
+### 2) Criar arquivo `.env` na raiz do projeto e ajustar as variáveis
+```env
+#PORTA DO SERVIDOR DO EXPRESS
+PORT=3000
+
+# CONFIGURAÇÃO POSTGRES
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=senha
+DB_DATABASE=db_agendamentos
+PG_DATABASE_ADMIN=postgres
+DB_DATABASE_ADMIN_PASSWORD=senha
+
+# CAMINHO PARA O SQL DO BANCO EM POSTGRES
+DB_DATABASE_FILE_PATH=./src/database/banco.sql
+
+# CONFIGURAÇÃO JWT
+JWT_ACCESS_SECRET=meu-segredo-jwt-access
+JWT_REFRESH_SECRET=meu-segredo-jwt-refresh
+JWT_ACCESS_EXPIRES=15m
+JWT_REFRESH_EXPIRES=7d
+```
+
+### 3) Instalar dependências 
+```bash
+npm install
+```
+
+### 4) Criar o banco de dados
+- Ajuste o caminho para o arquivo do banco de dados no .env.  
+- Ajuste usuário/senha/porta conforme o seu Postgres.
+- Execute o seguinte script para criar e popular o banco de dados e depois para iniciar
+
+```bash
+npm run reset-database
+npm run dev   # ou: node server.js / npm start (conforme seu package.json)
+```
+
+### 5) Porta Padrão
+O servidor será executado por padrão na porta 3000. Você pode acessá-lo em http://localhost:3000.
+
+### 6) Variáveis de Ambiente
+O arquivo .env é necessário para configurar a conexão com o banco de dados e a porta do servidor.
+
+| Variável        | Descrição          | Exemplo                 |
+|-----------------|--------------------|-------------------------|
+| PORT              | A porta em que o servidor Express irá rodar. | 3000 |
+| DB_HOST      | O endereço do servidor do banco de dados.	 | localhost         |
+| DB_PORT         | A porta do servidor do banco de dados.	 | 5432          |
+| DB_USER        | O nome de usuário para conectar ao banco.	 | postgres          |
+| DB_PASSWORD     | A senha para o usuário do banco de dados. (Deve ser alterada no .env)	 | senha          |
+| DB_DATABASE | O nome do banco de dados da aplicação. | db_agendamentos         |
+| DB_DATABASE_ADMIN_PASSWORD | A senha do superusuário do Postgres, usada pelo script de reset. (Deve ser alterada no .env) | senha      |
+| PSQL_PATH | (Opcional) Caminho completo para o executável psql.exe no Windows, caso não esteja no PATH do sistema.	 | C:\...\psql.exe     |
+
+### 11) Endpoints da API
+
+## 📦 Rotas — Agendamento
+
+| Método | Rota | Descrição / Observações |
+|--------|------|---------|-------------------------|
+| GET    | `api/agendamento` | Listar todos os agendamentos. |
+| GET    | ` api/agendamento/:id` | Buscar agendamentos por ID. |
+| POST   | `api/agendamento ` | Criar agendamento.|
+| PUT    | `api/agendamento/:id` | Atualizar agendamento. |
+| PATCH    | `api/agendamento/:id` | Atualizar agendamento. |
+
+## 👤 Rotas — Usuário
+
+| Método | Rota | Descrição / Observações |
+|--------|------|---------|-------------------------|
+| GET    | `api/usuarios` | Listar todos os usuarios. |
+| GET    | ` api/usuarios/:id` | Buscar usuarios por ID. |
+| POST   | `api/usuarios ` | Criar usuarios.|
+| PUT    | `api/usuarios/:id` | Atualizar usuarios. |
+| PATCH    | `api/usuarios/:id` | Atualizar usuarios. |
+| PATCH    | `api/usuarios/:id/ativo` | Ativar ou Inativar usuarios. |
+
+
+## 🔁 Rotas — Clinicas
+
+| Método | Rota | Descrição / Observações |
+|--------|------|---------|-------------------------|
+| GET    | `api/clinica` | Listar todas as clinicas. |
+| GET    | ` api/clinica/:id` | Buscar clinica por ID. |
+| POST   | `api/clinica ` | Criar clinica.|
+| PUT    | `api/clinica/:id` | Atualizar clinica. |
+| PATCH    | `api/clinica/:id` | Atualizar clinica. |
+| PATCH    | `api/clinica/:id/ativo` | Ativar ou Inativar clinica. |
+
+## 🔁 Rotas — Pacientes
+
+| Método | Rota | Descrição / Observações |
+|--------|------|---------|-------------------------|
+| GET    | `api/paciente` | Listar todos os pacientes. |
+| GET    | ` api/paciente/:id` | Buscar paciente por ID. |
+| POST   | `api/paciente ` | Criar paciente.|
+| PUT    | `api/paciente/:id` | Atualizar paciente. |
+| PATCH    | `api/paciente/:id` | Atualizar paciente. |
+| PATCH    | `api/paciente/:id/ativo` | Ativar ou Inativar paciente. |
